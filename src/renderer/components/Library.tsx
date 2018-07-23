@@ -13,8 +13,13 @@ import FontIcon from "material-ui/FontIcon";
 import IconButton from "material-ui/IconButton";
 import RaisedButton from "material-ui/RaisedButton";
 import { blue500 } from "material-ui/styles/colors";
-import TextField from "material-ui/TextField";
-
+//import TextField from "material-ui/TextField";
+import TextField from "@material-ui/core/TextField";
+import Input from "@material-ui/core/Input";
+import InputLabel from "@material-ui/core/InputLabel";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import Search from "@material-ui/icons/Search";
+import FormControl from "@material-ui/core/FormControl";
 import { Store } from "redux";
 
 import {
@@ -269,19 +274,20 @@ export default class Library extends React.Component<
             listToDisplay = <this.Spinner />;
         }
         const subHeader = (
-            <div>
+            <div className={LibraryStyles.subHeader}>
                 <button
                     className={classNames(
                         LibraryStyles.display_button,
                         !list && LibraryStyles.display_button_disable
                     )}
                     onClick={() => {
-                        that.setState({ list: true });
+                        that.setState({ list: false });
                     }}
+                    style={{ height: "59px" }}
                 >
-                    <svg viewBox={ListIcon.content_table}>
-                        <title>{__("library.svg.list")}</title>
-                        <use xlinkHref={"#" + ListIcon.id} />
+                    <svg viewBox={CardIcon.content_table}>
+                        <title>{__("library.svg.card")}</title>
+                        <use xlinkHref={"#" + CardIcon.id} />
                     </svg>
                 </button>
                 <button
@@ -290,14 +296,38 @@ export default class Library extends React.Component<
                         list && LibraryStyles.display_button_disable
                     )}
                     onClick={() => {
-                        that.setState({ list: false });
+                        that.setState({ list: true });
                     }}
+                    style={{ height: "59px" }}
                 >
-                    <svg viewBox={CardIcon.content_table}>
-                        <title>{__("library.svg.card")}</title>
-                        <use xlinkHref={"#" + CardIcon.id} />
+                    <svg viewBox={ListIcon.content_table}>
+                        <title>{__("library.svg.list")}</title>
+                        <use xlinkHref={"#" + ListIcon.id} />
                     </svg>
                 </button>
+                <FormControl
+                    style={{
+                        marginTop: "6px",
+                        width: "325px",
+                        marginLeft: "50px"
+                    }}
+                >
+                    <Input
+                        id="search-input"
+                        placeholder={__("Rechercher")}
+                        type="search"
+                        classes={{
+                            underline: LibraryStyles.search
+                        }}
+                        endAdornment={
+                            <InputAdornment position="end">
+                                <IconButton aria-label="Toggle password visibility">
+                                    <Search />
+                                </IconButton>
+                            </InputAdornment>
+                        }
+                    />
+                </FormControl>
             </div>
         );
 
@@ -332,12 +362,12 @@ export default class Library extends React.Component<
                             </p>
                             <div>
                                 <TextField
-                                    ref={input => {
+                                    /*  ref={input => {
                                         if (input) {
                                             input.focus();
                                         }
                                     }}
-                                    hintText={__("library.lcp.hint")}
+                                    hintText={__("library.lcp.hint")} */
                                     type={
                                         !this.state.lcpPassVisible
                                             ? "password"

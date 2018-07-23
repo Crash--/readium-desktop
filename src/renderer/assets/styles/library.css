@@ -65,3 +65,12 @@
     width: 1.5rem;
   }
 }
+
+.search {
+  color: red;
+}
+.subHeader {
+  margin-left: 16px;
+  height: 59px;
+  display: flex;
+}
