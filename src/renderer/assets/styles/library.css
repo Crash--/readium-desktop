@@ -66,6 +66,9 @@
   }
 }
 
+.wrapper {
+  background-color: #f8f8f8;
+}
 .search {
   color: red;
 }

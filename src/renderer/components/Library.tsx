@@ -180,7 +180,6 @@ export default class Library extends React.Component<
         const list: any = [];
         let i = 0;
         const dlStore = this.store.getState().publicationDownloads;
-
         for (const pub of this.props.catalog.publications.sort(
             this.sort.bind(this)
         )) {
@@ -192,7 +191,7 @@ export default class Library extends React.Component<
                 downloadProgress =
                     dlStore.publicationDownloadProgress[pub.identifier];
             }
-
+            //console.log({ pub });
             list.push(
                 <PublicationCard
                     key={i}
@@ -249,6 +248,7 @@ export default class Library extends React.Component<
     }
 
     public render(): React.ReactElement<{}> {
+        console.log("render Library");
         const __ = this.translator.translate.bind(this.translator);
         const list = this.state.list;
 
@@ -333,178 +333,190 @@ export default class Library extends React.Component<
 
         return (
             <div>
-                {subHeader}
-                <div style={Styles.Library.list}>{listToDisplay}</div>
-                <Dialog
-                    title={__("library.lcp.title")}
-                    actions={[
-                        <FlatButton
-                            label={__("library.lcp.cancel")}
-                            primary={true}
-                            onClick={this.handleLcpPassClose.bind(this)}
-                        />,
-                        <FlatButton
-                            label={__("library.lcp.submit")}
-                            primary={true}
-                            onClick={this.handleLcpPassSubmit.bind(this)}
-                        />
-                    ]}
-                    open={this.state.lcpPassOpen}
-                    onRequestClose={this.handleLcpPassClose.bind(this)}
-                >
-                    {this.store.getState().lcp.lastUserKeyCheck && (
-                        <div className={LibraryStyles.lcp_pass_form}>
-                            <p>{__("library.lcp.sentence")}</p>
-                            <p>
-                                {__("library.lcp.hintSentence") +
-                                    this.store.getState().lcp.lastUserKeyCheck
-                                        .hint}{" "}
-                            </p>
-                            <div>
-                                <TextField
-                                    /*  ref={input => {
+                <>{subHeader}</>
+                <div className={LibraryStyles.wrapper}>
+                    <div /*style={Styles.Library.list}*/>{listToDisplay}</div>
+                    <Dialog
+                        title={__("library.lcp.title")}
+                        actions={[
+                            <FlatButton
+                                label={__("library.lcp.cancel")}
+                                primary={true}
+                                onClick={this.handleLcpPassClose.bind(this)}
+                            />,
+                            <FlatButton
+                                label={__("library.lcp.submit")}
+                                primary={true}
+                                onClick={this.handleLcpPassSubmit.bind(this)}
+                            />
+                        ]}
+                        open={this.state.lcpPassOpen}
+                        onRequestClose={this.handleLcpPassClose.bind(this)}
+                    >
+                        {this.store.getState().lcp.lastUserKeyCheck && (
+                            <div className={LibraryStyles.lcp_pass_form}>
+                                <p>{__("library.lcp.sentence")}</p>
+                                <p>
+                                    {__("library.lcp.hintSentence") +
+                                        this.store.getState().lcp
+                                            .lastUserKeyCheck.hint}{" "}
+                                </p>
+                                <div>
+                                    <TextField
+                                        /*  ref={input => {
                                         if (input) {
                                             input.focus();
                                         }
                                     }}
                                     hintText={__("library.lcp.hint")} */
-                                    type={
-                                        !this.state.lcpPassVisible
-                                            ? "password"
-                                            : "text"
-                                    }
-                                    onChange={this.handleLcpPassChange.bind(
-                                        this
-                                    )}
-                                    value={this.state.lcpPass}
-                                />
-                                <button
-                                    className={LibraryStyles.eye_button}
-                                    onClick={this.switchLcpPassVisibe.bind(
-                                        this
-                                    )}
-                                >
-                                    <svg viewBox={EyeIcon.eye}>
-                                        <title>
-                                            {__("library.svg.showParaphrase")}
-                                        </title>
-                                        <use xlinkHref={"#" + EyeIcon.id} />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                </Dialog>
-                <Dialog
-                    title={__("library.lcp.informations.title")}
-                    actions={[
-                        <FlatButton
-                            label={__("library.lcp.informations.close")}
-                            primary={true}
-                            onClick={this.closeInfoDialog.bind(this)}
-                        />
-                    ]}
-                    modal={true}
-                    open={this.state.infoDialogOpen}
-                >
-                    {this.state.currentPublication && (
-                        <div>
-                            <p>
-                                {__("library.lcp.informations.provider") +
-                                    " " +
-                                    lcp.provider}
-                            </p>
-                            <p>
-                                {__("library.lcp.informations.issued") +
-                                    " " +
-                                    this.dateToString(lcp.issued)}
-                            </p>
-                            {lcp.updated && (
-                                <p>
-                                    {__("library.lcp.informations.updated") +
-                                        " " +
-                                        this.dateToString(lcp.updated)}
-                                </p>
-                            )}
-
-                            {lcp.rights.start && (
-                                <span>
-                                    <h3>
-                                        {__(
-                                            "library.lcp.informations.right.title"
+                                        type={
+                                            !this.state.lcpPassVisible
+                                                ? "password"
+                                                : "text"
+                                        }
+                                        onChange={this.handleLcpPassChange.bind(
+                                            this
                                         )}
-                                    </h3>
+                                        value={this.state.lcpPass}
+                                    />
+                                    <button
+                                        className={LibraryStyles.eye_button}
+                                        onClick={this.switchLcpPassVisibe.bind(
+                                            this
+                                        )}
+                                    >
+                                        <svg viewBox={EyeIcon.eye}>
+                                            <title>
+                                                {__(
+                                                    "library.svg.showParaphrase"
+                                                )}
+                                            </title>
+                                            <use xlinkHref={"#" + EyeIcon.id} />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </Dialog>
+                    <Dialog
+                        title={__("library.lcp.informations.title")}
+                        actions={[
+                            <FlatButton
+                                label={__("library.lcp.informations.close")}
+                                primary={true}
+                                onClick={this.closeInfoDialog.bind(this)}
+                            />
+                        ]}
+                        modal={true}
+                        open={this.state.infoDialogOpen}
+                    >
+                        {this.state.currentPublication && (
+                            <div>
+                                <p>
+                                    {__("library.lcp.informations.provider") +
+                                        " " +
+                                        lcp.provider}
+                                </p>
+                                <p>
+                                    {__("library.lcp.informations.issued") +
+                                        " " +
+                                        this.dateToString(lcp.issued)}
+                                </p>
+                                {lcp.updated && (
                                     <p>
                                         {__(
-                                            "library.lcp.informations.right.start"
+                                            "library.lcp.informations.updated"
                                         ) +
                                             " " +
-                                            this.dateToString(lcp.rights.start)}
+                                            this.dateToString(lcp.updated)}
                                     </p>
-                                </span>
-                            )}
-                            {lcp.rights.end && (
-                                <p>
-                                    {__("library.lcp.informations.right.end") +
-                                        " " +
-                                        this.dateToString(lcp.rights.end)}
-                                </p>
-                            )}
-                            {lcp.rights.copy && (
-                                <p>
-                                    {__("library.lcp.informations.right.copy") +
-                                        " " +
-                                        lcp.rights.copy}
-                                </p>
-                            )}
-                            {lcp.rights.print && (
-                                <p>
-                                    {__(
-                                        "library.lcp.informations.right.print"
-                                    ) +
-                                        " " +
-                                        lcp.rights.print}
-                                </p>
-                            )}
-                        </div>
-                    )}
-                </Dialog>
-                <Dialog
-                    actions={[
-                        <FlatButton
-                            label={__("dialog.yes")}
-                            primary={true}
-                            onClick={this.closeReturnDialog.bind(this)}
-                        />,
-                        <FlatButton
-                            label={__("dialog.no")}
-                            primary={true}
-                            onClick={this.closeReturnDialog.bind(this)}
-                        />
-                    ]}
-                    modal={true}
-                    open={this.state.returnDialogOpen}
-                >
-                    <p>{__("publication.returnSentence")}</p>
-                </Dialog>
-                <Dialog
-                    actions={[
-                        <FlatButton
-                            label={__("dialog.yes")}
-                            primary={true}
-                            onClick={this.closeRenewDialog.bind(this, true)}
-                        />,
-                        <FlatButton
-                            label={__("dialog.no")}
-                            primary={true}
-                            onClick={this.closeRenewDialog.bind(this)}
-                        />
-                    ]}
-                    modal={true}
-                    open={this.state.renewDialogOpen}
-                >
-                    <p>{__("publication.renewSentence")}</p>
-                </Dialog>
+                                )}
+
+                                {lcp.rights.start && (
+                                    <span>
+                                        <h3>
+                                            {__(
+                                                "library.lcp.informations.right.title"
+                                            )}
+                                        </h3>
+                                        <p>
+                                            {__(
+                                                "library.lcp.informations.right.start"
+                                            ) +
+                                                " " +
+                                                this.dateToString(
+                                                    lcp.rights.start
+                                                )}
+                                        </p>
+                                    </span>
+                                )}
+                                {lcp.rights.end && (
+                                    <p>
+                                        {__(
+                                            "library.lcp.informations.right.end"
+                                        ) +
+                                            " " +
+                                            this.dateToString(lcp.rights.end)}
+                                    </p>
+                                )}
+                                {lcp.rights.copy && (
+                                    <p>
+                                        {__(
+                                            "library.lcp.informations.right.copy"
+                                        ) +
+                                            " " +
+                                            lcp.rights.copy}
+                                    </p>
+                                )}
+                                {lcp.rights.print && (
+                                    <p>
+                                        {__(
+                                            "library.lcp.informations.right.print"
+                                        ) +
+                                            " " +
+                                            lcp.rights.print}
+                                    </p>
+                                )}
+                            </div>
+                        )}
+                    </Dialog>
+                    <Dialog
+                        actions={[
+                            <FlatButton
+                                label={__("dialog.yes")}
+                                primary={true}
+                                onClick={this.closeReturnDialog.bind(this)}
+                            />,
+                            <FlatButton
+                                label={__("dialog.no")}
+                                primary={true}
+                                onClick={this.closeReturnDialog.bind(this)}
+                            />
+                        ]}
+                        modal={true}
+                        open={this.state.returnDialogOpen}
+                    >
+                        <p>{__("publication.returnSentence")}</p>
+                    </Dialog>
+                    <Dialog
+                        actions={[
+                            <FlatButton
+                                label={__("dialog.yes")}
+                                primary={true}
+                                onClick={this.closeRenewDialog.bind(this, true)}
+                            />,
+                            <FlatButton
+                                label={__("dialog.no")}
+                                primary={true}
+                                onClick={this.closeRenewDialog.bind(this)}
+                            />
+                        ]}
+                        modal={true}
+                        open={this.state.renewDialogOpen}
+                    >
+                        <p>{__("publication.renewSentence")}</p>
+                    </Dialog>
+                </div>
             </div>
         );
     }
