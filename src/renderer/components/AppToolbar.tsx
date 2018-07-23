@@ -14,9 +14,12 @@ import DropDownMenu from "material-ui/DropDownMenu";
 import FontIcon from "material-ui/FontIcon";
 import IconButton from "material-ui/IconButton";
 import IconMenu from "material-ui/IconMenu";
-import Menu from "material-ui/Menu";
-import MenuItem from "material-ui/MenuItem";
-import Popover from "material-ui/Popover";
+//import Menu from "material-ui/Menu";
+import MenuList from "@material-ui/core/MenuList";
+import MenuItem from "@material-ui/core/MenuItem";
+
+//import MenuItem from "material-ui/MenuItem";
+//import Popover from "material-ui/Popover";
 import { blue500 } from "material-ui/styles/colors";
 import { Toolbar, ToolbarGroup, ToolbarSeparator } from "material-ui/Toolbar";
 
@@ -42,7 +45,7 @@ import QuestionIcon from "readium-desktop/renderer/assets/icons/question.svg";
 import * as CNLLogoUrl from "readium-desktop/renderer/assets/logos/cnl.png";
 
 import * as AppBarStyles from "readium-desktop/renderer/assets/styles/app-bar.css";
-
+import * as AppStyles from "readium-desktop/renderer/assets/styles/app.css";
 import CollectionDialog from "readium-desktop/renderer/components/opds/CollectionDialog";
 
 import { OPDS } from "readium-desktop/common/models/opds";
@@ -57,7 +60,7 @@ import {
     _APP_VERSION,
     _GIT_BRANCH,
     _GIT_DATE,
-    _GIT_SHORT,
+    _GIT_SHORT
 } from "readium-desktop/preprocessor-directives";
 
 interface AppToolbarState {
@@ -87,14 +90,15 @@ interface AppToolbarProps {
     opdsList: OPDS[];
 }
 
-export default class AppToolbar extends React.Component<AppToolbarProps, AppToolbarState> {
+export default class AppToolbar extends React.Component<
+    AppToolbarProps,
+    AppToolbarState
+> {
     public state: AppToolbarState;
 
-    @lazyInject("store")
-    private store: Store<RootState>;
+    @lazyInject("store") private store: Store<RootState>;
 
-    @lazyInject("translator")
-    private translator: Translator;
+    @lazyInject("translator") private translator: Translator;
 
     private addEpubInput: any;
 
@@ -114,7 +118,7 @@ export default class AppToolbar extends React.Component<AppToolbarProps, AppTool
             localeList: {
                 fr: "Français",
                 en: "English",
-                de: "Deutsch",
+                de: "Deutsch"
             },
 
             localeOpen: false,
@@ -122,7 +126,7 @@ export default class AppToolbar extends React.Component<AppToolbarProps, AppTool
             opdsOpen: false,
             opdsAnchorEl: undefined,
             otherOpen: false,
-            otherAnchorEl: undefined,
+            otherAnchorEl: undefined
         };
 
         this.handleLocaleChange = this.handleLocaleChange.bind(this);
@@ -139,13 +143,13 @@ export default class AppToolbar extends React.Component<AppToolbarProps, AppTool
             ) {
                 this.setState({
                     update: true,
-                    latestVersionUrl: storeState.update.latestVersionUrl,
+                    latestVersionUrl: storeState.update.latestVersionUrl
                 });
             }
         });
     }
 
-    public render(): React.ReactElement<{}>  {
+    public render(): React.ReactElement<{}> {
         const __ = this.translator.translate.bind(this.translator);
 
         const actions = [
@@ -153,7 +157,7 @@ export default class AppToolbar extends React.Component<AppToolbarProps, AppTool
                 label="Cancel"
                 primary={true}
                 onClick={this.handleClose.bind(this)}
-            />,
+            />
         ];
 
         // Use en as default language
@@ -174,17 +178,16 @@ export default class AppToolbar extends React.Component<AppToolbarProps, AppTool
             for (const newOpds of this.props.opdsList.sort(this.sort)) {
                 listOPDS.push(
                     <MenuItem
-                        key= {i}
-                        primaryText={newOpds.name}
+                        key={i}
+                        //primaryText={newOpds.name}
                         onClick={() => {
                             this.setState({
                                 opdsImportOpen: true,
                                 opds: newOpds,
-                                opdsOpen: false,
+                                opdsOpen: false
                             });
                         }}
-                    >
-                    </MenuItem>,
+                    />
                 );
                 i++;
             }
@@ -192,241 +195,86 @@ export default class AppToolbar extends React.Component<AppToolbarProps, AppTool
         const allMenuItems: JSX.Element[] = [];
 
         allMenuItems.push(...listOPDS);
-        allMenuItems.push(
-            <Divider key={i}/>,
-        );
+        allMenuItems.push(<Divider key={i} />);
         i++;
         allMenuItems.push(
             <MenuItem
                 key={i}
-                primaryText={__("opds.addMenu")}
+                // primaryText={__("opds.addMenu")}
                 onClick={() => {
                     this.handleOpdsClose();
                     this.props.openDialog(
-                        <OpdsForm closeDialog={this.props.closeDialog}/>,
+                        <OpdsForm closeDialog={this.props.closeDialog} />,
                         null,
-                        []);
+                        []
+                    );
                 }}
-            />,
+            />
         );
         i++;
         return (
             <div>
                 <div className={AppBarStyles.root}>
-                    <button
-                        onClick={this.handleLocalOpen.bind(this)}
-                        className={classNames(AppBarStyles.button, AppBarStyles.button_text)}
-                    >
-                        {this.state.localeList[this.state.locale]}
-                    </button>
-                    <Popover
-                        open={this.state.localeOpen}
-                        anchorEl={this.state.localAnchorEl}
-                        anchorOrigin={{horizontal: "left", vertical: "bottom"}}
-                        targetOrigin={{horizontal: "left", vertical: "top"}}
-                        onRequestClose={this.handleLocalClose.bind(this)}
-                    >
-                        <Menu>
-                            <MenuItem
-                                primaryText= {__("Français")}
-                                onClick={() => {this.handleLocaleChange("fr"); }}
-                            />
-                            <MenuItem
-                                primaryText= {__("English")}
-                                onClick={() => {this.handleLocaleChange("en"); }}
-                            />
-                            <MenuItem
-                                primaryText= {__("Deutsch")}
-                                onClick={() => {this.handleLocaleChange("de"); }}
-                            />
-                        </Menu>
-                    </Popover>
-                    <div className={AppBarStyles.button_group}>
-                        {this.state.update && (
-                                <React.Fragment>
-                                    <a
-                                        href="{this.state.latestVersionUrl}"
-                                        className={AppBarStyles.update}>
-                                        {__("update.available")}
-                                    </a>
-                                    <div className={AppBarStyles.separator} />
-                                </React.Fragment>
-                            )
-                        }
-                        <button
-                            className={AppBarStyles.button}
-                            onClick={this.handleOpdsOpen.bind(this)}
+                    <MenuList className={AppBarStyles.rootMenu}>
+                        <MenuItem
+                            // primaryText={}
+                            onClick={() => {
+                                this.handleLocaleChange("fr");
+                            }}
+                          
                         >
-                            <svg viewBox={OPDSIcon.content_table}>
-                                <title>{__("toolbar.svg.opds")}</title>
-                                <use xlinkHref={"#" + OPDSIcon.id} />
-                            </svg>
-                        </button>
-                        <Popover
-                            open={this.state.opdsOpen}
-                            anchorEl={this.state.opdsAnchorEl}
-                            anchorOrigin={{horizontal: "left", vertical: "bottom"}}
-                            targetOrigin={{horizontal: "left", vertical: "top"}}
-                            onRequestClose={this.handleOpdsClose.bind(this)}
+                            <span className={AppStyles.primarytextcolor}>
+                                {__("Mes livres")}
+                            </span>
+                        </MenuItem>
+                        <MenuItem
+                            //primaryText={__("Catalogues")}
+                            onClick={() => {
+                                this.handleLocaleChange("fr");
+                            }}
                         >
-                            <Menu>
-                                {allMenuItems}
-                            </Menu>
-                        </Popover>
-                        <button
-                            className={AppBarStyles.button}
-                            onClick={() => this.addEpubInput.click()}
+                            <span className={AppStyles.secondtextcolor}>
+                                {__("Catalogues")}
+                            </span>
+                        </MenuItem>
+                        <MenuItem
+                            //primaryText={__("Préférences")}
+                            onClick={() => {
+                                this.handleLocaleChange("fr");
+                            }}
                         >
-                            <svg viewBox={AddIcon.content_table}>
-                                <title>{__("toolbar.svg.addEpub")}</title>
-                                <use xlinkHref={"#" + AddIcon.id} />
-                            </svg>
-                            <input
-                                ref={(element: any) => this.addEpubInput = element}
-                                type="file"
-                                onChange={this.handleFileChange}
-                            />
-                        </button>
-                        <div className={AppBarStyles.separator} />
-                        <button
-                            className={AppBarStyles.button}
-                            onClick={this.handleOtherOpen.bind(this)}
-                        >
-                            <svg viewBox={MenuIcon.content_table}>
-                                <title>{__("toolbar.svg.others")}</title>
-                                <use xlinkHref={"#" + MenuIcon.id} />
-                            </svg>
-                        </button>
-                        <Popover
-                            open={this.state.otherOpen}
-                            anchorEl={this.state.otherAnchorEl}
-                            anchorOrigin={{horizontal: "left", vertical: "bottom"}}
-                            targetOrigin={{horizontal: "left", vertical: "top"}}
-                            onRequestClose={this.handleOtherClose.bind(this)}
-                        >
-                            <Menu>
-                                <MenuItem
-                                    primaryText= {__("toolbar.help")}
-                                    onClick={ this.handleOpen.bind(this, helpContent, []) }
-                                    leftIcon={
-                                        <svg viewBox={QuestionIcon.content_table}>
-                                            <title>{__("toolbar.svg.help")}</title>
-                                            <use xlinkHref={"#" + QuestionIcon.id} />
-                                        </svg>
-                                    } />
-                                <MenuItem
-                                    primaryText={__("toolbar.news")}
-                                    onClick={ this.handleOpen.bind(this, newsContent, []) }
-                                    leftIcon={
-                                        <svg viewBox={GiftIcon.content_table}>
-                                            <title>{__("toolbar.svg.news")}</title>
-                                            <use xlinkHref={"#" + GiftIcon.id} />
-                                        </svg>
-                                    } />
-                                <MenuItem
-                                    primaryText={__("toolbar.about")}
-                                    onClick={
-                                        this.handleOpen.bind(
-                                            this,
-                                            aboutContent, [
-                                                {
-                                                    from: "{{version}}",
-                                                    to: _APP_VERSION,
-                                                },
-                                                {
-                                                    from: "{{date}}",
-                                                    to: _GIT_DATE,
-                                                },
-                                                {
-                                                    from: "{{short}}",
-                                                    to: _GIT_SHORT,
-                                                },
-                                                {
-                                                    from: "{{branch}}",
-                                                    to: _GIT_BRANCH,
-                                                },
-                                                {
-                                                    from: "{{cnlLogoUrl}}",
-                                                    to: CNLLogoUrl,
-                                                },
-                                            ],
-                                        )
-                                    }
-                                    leftIcon={
-                                        <svg viewBox={InfoIcon.content_table}>
-                                            <title>{__("toolbar.svg.about")}</title>
-                                            <use xlinkHref={"#" + InfoIcon.id} />
-                                        </svg>
-                                    } />
-                            </Menu>
-                        </Popover>
-                    </div>
+                            <span className={AppStyles.secondtextcolor}>
+                                {__("Préférences")}
+                            </span>
+                        </MenuItem>
+                    </MenuList>
                 </div>
-
-                <Dialog
-                    actions={actions}
-                    modal={false}
-                    open={this.state.open}
-                    onRequestClose={this.handleClose.bind(this)}
-                    autoScrollBodyContent={true}
-                    >
-                    <div dangerouslySetInnerHTML={{__html: this.state.dialogContent}} />
-                </Dialog>
-                <Dialog
-                    actions={[(
-                        <FlatButton
-                            label="Cancel"
-                            primary={true}
-                            onClick={this.handleClose.bind(this)}
-                        />
-                    )]}
-                    modal={false}
-                    open={this.state.aboutOpen}
-                    onRequestClose={this.handleClose.bind(this)}
-                    autoScrollBodyContent={true}
-                    >
-                    <>
-
-                    </>
-                </Dialog>
-                {this.state.opdsImportOpen ? (
-                    <CollectionDialog
-                        open={this.state.opdsImportOpen}
-                        closeList={this.closeCollectionDialog.bind(this)}
-                        opds={this.state.opds}
-                        openDialog={this.props.openDialog}
-                        closeDialog={this.props.closeDialog}
-                        updateDisplay={this.updateDisplay.bind(this)}/>
-                ) : (
-                    <div></div>
-                )
-                }
             </div>
         );
     }
 
     private handleLocalOpen(event: any) {
-        this.setState({localAnchorEl: event.currentTarget, localeOpen: true});
+        this.setState({ localAnchorEl: event.currentTarget, localeOpen: true });
     }
 
     private handleLocalClose() {
-        this.setState({localeOpen: false});
+        this.setState({ localeOpen: false });
     }
 
     private handleOpdsOpen(event: any) {
-        this.setState({opdsAnchorEl: event.currentTarget, opdsOpen: true});
+        this.setState({ opdsAnchorEl: event.currentTarget, opdsOpen: true });
     }
 
     private handleOpdsClose() {
-        this.setState({opdsOpen: false});
+        this.setState({ opdsOpen: false });
     }
 
     private handleOtherOpen(event: any) {
-        this.setState({otherAnchorEl: event.currentTarget, otherOpen: true});
+        this.setState({ otherAnchorEl: event.currentTarget, otherOpen: true });
     }
 
     private handleOtherClose() {
-        this.setState({otherOpen: false});
+        this.setState({ otherOpen: false });
     }
 
     private handleOpen = (content: string, replacements: any) => {
@@ -434,17 +282,17 @@ export default class AppToolbar extends React.Component<AppToolbarProps, AppTool
             content = content.replace(replacement.from, replacement.to);
         }
 
-        this.setState({open: true});
-        this.setState({dialogContent : content, otherOpen: false});
-    }
+        this.setState({ open: true });
+        this.setState({ dialogContent: content, otherOpen: false });
+    };
 
     private handleClose = () => {
-        this.setState({open: false});
-    }
+        this.setState({ open: false });
+    };
 
     private handleLocaleChange(locale: string) {
         this.store.dispatch(setLocale(locale));
-        this.setState({locale, localeOpen: false});
+        this.setState({ locale, localeOpen: false });
     }
 
     private handleFileChange(event: any) {
@@ -458,7 +306,7 @@ export default class AppToolbar extends React.Component<AppToolbarProps, AppTool
     }
 
     private closeCollectionDialog() {
-        this.setState({opdsImportOpen: false});
+        this.setState({ opdsImportOpen: false });
     }
 
     private sort(a: OPDS, b: OPDS) {
@@ -472,6 +320,6 @@ export default class AppToolbar extends React.Component<AppToolbarProps, AppTool
     }
 
     private updateDisplay(newOpds: OPDS) {
-        this.setState({opds: newOpds});
+        this.setState({ opds: newOpds });
     }
 }

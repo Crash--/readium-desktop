@@ -22,3 +22,20 @@ body {
 .primary {
   color: rgb(0, 188, 212);
 }
+
+.primarytextcolor {
+  color: #3b3b3b;
+}
+
+.secondtextcolor {
+  color: #afafaf;
+}
+
+.primarytextcolor::after {
+  position: absolute;
+  content: "";
+  border-bottom: 3px solid #3b3b3b;
+  width: 70%;
+  left: 16px;
+  bottom: 0px;
+}

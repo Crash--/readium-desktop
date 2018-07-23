@@ -17,7 +17,7 @@ import { Publication } from "readium-desktop/common/models/publication";
 
 import { Translator } from "readium-desktop/common/services/translator";
 
-import { Card, CardMedia, CardTitle} from "material-ui/Card";
+import { Card, CardMedia, CardTitle } from "material-ui/Card";
 import IconButton from "material-ui/IconButton";
 import LinearProgress from "material-ui/LinearProgress";
 
@@ -50,27 +50,29 @@ interface IPublicationProps {
     openRenewDialog: (publication: Publication) => void;
 }
 
-export default class PublicationListElement extends React.Component<IPublicationProps, IPublicationState> {
-    @lazyInject("translator")
-    private translator: Translator;
+export default class PublicationListElement extends React.Component<
+    IPublicationProps,
+    IPublicationState
+> {
+    @lazyInject("translator") private translator: Translator;
 
     constructor(props: IPublicationProps) {
         super(props);
 
         this.state = {
-            isFlipped: false,
+            isFlipped: false
         };
     }
 
     public handleFront = () => {
         this.setState({ isFlipped: true });
-    }
+    };
 
     public handleBack = () => {
         this.setState({ isFlipped: false });
-    }
+    };
 
-    public render(): React.ReactElement<{}>  {
+    public render(): React.ReactElement<{}> {
         const __ = this.translator.translate.bind(this.translator);
         const publication = this.props.publication;
         const that = this;
@@ -84,7 +86,9 @@ export default class PublicationListElement extends React.Component<IPublication
                 if (authors !== "") {
                     authors += ", ";
                 }
-                authors += this.translator.translateContentField(newAuthor.name);
+                authors += this.translator.translateContentField(
+                    newAuthor.name
+                );
             }
         }
         if (publication.cover) {
@@ -97,78 +101,187 @@ export default class PublicationListElement extends React.Component<IPublication
                     <CardMedia>
                         <div
                             style={Styles.BookCard.cover}
-                            onMouseEnter={() => {this.handleFront(); }}
-                            onMouseLeave={() => {this.handleBack(); }}>
+                            onMouseEnter={() => {
+                                this.handleFront();
+                            }}
+                            onMouseLeave={() => {
+                                this.handleBack();
+                            }}
+                        >
                             <ReactCardFlip isFlipped={that.state.isFlipped}>
-                                <div key="front" style={Styles.BookCard.image_container}>
+                                <div
+                                    key="front"
+                                    style={Styles.BookCard.image_container}
+                                >
                                     {publication.cover ? (
-                                        <img style={Styles.BookCard.image} src={publication.cover.url}/>
+                                        <img
+                                            style={Styles.BookCard.image}
+                                            src={publication.cover.url}
+                                        />
                                     ) : (
-                                        <div style={Styles.BookCard.custom_cover}>
-                                            <Cover publication={publication}/>
+                                        <div
+                                            style={Styles.BookCard.custom_cover}
+                                        >
+                                            <Cover publication={publication} />
                                         </div>
                                     )}
                                 </div>
                                 <div key="back">
-                                    <div
-                                        style={Styles.BookCard.image}
-                                    >
+                                    <div style={Styles.BookCard.image}>
                                         {this.props.downloading ? (
                                             <div>
                                                 <div>
-                                                    <p>{__("publication.progressDownload")}</p>
-                                                    <LinearProgress mode="determinate"
-                                                        value={this.props.downloadProgress} />
+                                                    <p>
+                                                        {__(
+                                                            "publication.progressDownload"
+                                                        )}
+                                                    </p>
+                                                    <LinearProgress
+                                                        mode="determinate"
+                                                        value={
+                                                            this.props
+                                                                .downloadProgress
+                                                        }
+                                                    />
                                                     <FlatButton
-                                                        onFocus={this.handleFront.bind(this)}
-                                                        onBlur={this.handleBack.bind(this)}
-                                                        style={Styles.BookCard.downloadButton}
-                                                        onClick={() => {this.props.cancelDownload(publication); }}
-                                                        label={__("publication.cancelDownloadButton")} />
+                                                        onFocus={this.handleFront.bind(
+                                                            this
+                                                        )}
+                                                        onBlur={this.handleBack.bind(
+                                                            this
+                                                        )}
+                                                        style={
+                                                            Styles.BookCard
+                                                                .downloadButton
+                                                        }
+                                                        onClick={() => {
+                                                            this.props.cancelDownload(
+                                                                publication
+                                                            );
+                                                        }}
+                                                        label={__(
+                                                            "publication.cancelDownloadButton"
+                                                        )}
+                                                    />
                                                 </div>
                                             </div>
                                         ) : (
                                             <div>
                                                 {lcpReadable(publication) ? (
                                                     <FlatButton
-                                                    onFocus={this.handleFront.bind(this)}
-                                                    onBlur={this.handleBack.bind(this)}
-                                                    style={Styles.BookCard.downloadButton}
-                                                    onClick={() => {this.props.handleRead(publication); }}
-                                                    label={__("publication.readButton")} />
+                                                        onFocus={this.handleFront.bind(
+                                                            this
+                                                        )}
+                                                        onBlur={this.handleBack.bind(
+                                                            this
+                                                        )}
+                                                        style={
+                                                            Styles.BookCard
+                                                                .downloadButton
+                                                        }
+                                                        onClick={() => {
+                                                            this.props.handleRead(
+                                                                publication
+                                                            );
+                                                        }}
+                                                        label={__(
+                                                            "publication.readButton"
+                                                        )}
+                                                    />
                                                 ) : (
-                                                    <p> {__("publication.notReadableLcp")} </p>
+                                                    <p>
+                                                        {" "}
+                                                        {__(
+                                                            "publication.notReadableLcp"
+                                                        )}{" "}
+                                                    </p>
                                                 )}
 
                                                 {publication.lcp && (
                                                     <>
                                                         <FlatButton
-                                                        onFocus={this.handleFront.bind(this)}
-                                                        onBlur={this.handleBack.bind(this)}
-                                                        style={Styles.BookCard.downloadButton}
-                                                        onClick={() => {this.props.openInfoDialog(publication); }}
-                                                        label={__("publication.infoButton")} />
+                                                            onFocus={this.handleFront.bind(
+                                                                this
+                                                            )}
+                                                            onBlur={this.handleBack.bind(
+                                                                this
+                                                            )}
+                                                            style={
+                                                                Styles.BookCard
+                                                                    .downloadButton
+                                                            }
+                                                            onClick={() => {
+                                                                this.props.openInfoDialog(
+                                                                    publication
+                                                                );
+                                                            }}
+                                                            label={__(
+                                                                "publication.infoButton"
+                                                            )}
+                                                        />
                                                         <FlatButton
-                                                        onFocus={this.handleFront.bind(this)}
-                                                        onBlur={this.handleBack.bind(this)}
-                                                        style={Styles.BookCard.downloadButton}
-                                                        onClick={() => {this.props.openRenewDialog(publication); }}
-                                                        label={__("publication.renewButton")} />
+                                                            onFocus={this.handleFront.bind(
+                                                                this
+                                                            )}
+                                                            onBlur={this.handleBack.bind(
+                                                                this
+                                                            )}
+                                                            style={
+                                                                Styles.BookCard
+                                                                    .downloadButton
+                                                            }
+                                                            onClick={() => {
+                                                                this.props.openRenewDialog(
+                                                                    publication
+                                                                );
+                                                            }}
+                                                            label={__(
+                                                                "publication.renewButton"
+                                                            )}
+                                                        />
                                                         <FlatButton
-                                                        onFocus={this.handleFront.bind(this)}
-                                                        onBlur={this.handleBack.bind(this)}
-                                                        style={Styles.BookCard.downloadButton}
-                                                        onClick={() => {this.props.openReturnDialog(publication); }}
-                                                        label={__("publication.returnButton")} />
+                                                            onFocus={this.handleFront.bind(
+                                                                this
+                                                            )}
+                                                            onBlur={this.handleBack.bind(
+                                                                this
+                                                            )}
+                                                            style={
+                                                                Styles.BookCard
+                                                                    .downloadButton
+                                                            }
+                                                            onClick={() => {
+                                                                this.props.openReturnDialog(
+                                                                    publication
+                                                                );
+                                                            }}
+                                                            label={__(
+                                                                "publication.returnButton"
+                                                            )}
+                                                        />
                                                     </>
                                                 )}
 
                                                 <FlatButton
-                                                onFocus={this.handleFront.bind(this)}
-                                                onBlur={this.handleBack.bind(this)}
-                                                style={Styles.BookCard.downloadButton}
-                                                onClick={() => {this.props.deletePublication(publication); }}
-                                                label={__("publication.deleteButton")}/>
+                                                    onFocus={this.handleFront.bind(
+                                                        this
+                                                    )}
+                                                    onBlur={this.handleBack.bind(
+                                                        this
+                                                    )}
+                                                    style={
+                                                        Styles.BookCard
+                                                            .downloadButton
+                                                    }
+                                                    onClick={() => {
+                                                        this.props.deletePublication(
+                                                            publication
+                                                        );
+                                                    }}
+                                                    label={__(
+                                                        "publication.deleteButton"
+                                                    )}
+                                                />
                                             </div>
                                         )}
                                     </div>
@@ -177,11 +290,18 @@ export default class PublicationListElement extends React.Component<IPublication
                         </div>
                     </CardMedia>
                     <CardTitle
-                        titleStyle={{whiteSpace: "nowrap", overflow: "hidden"}}
-                        subtitleStyle={{whiteSpace: "nowrap", overflow: "hidden"}}
-                        title={
-                            this.translator.translateContentField(publication.title)
-                        }
+                        titleStyle={{
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            color: "red"
+                        }}
+                        subtitleStyle={{
+                            whiteSpace: "nowrap",
+                            overflow: "hidden"
+                        }}
+                        title={this.translator.translateContentField(
+                            publication.title
+                        )}
                         subtitle={authors}
                     />
                 </Card>
