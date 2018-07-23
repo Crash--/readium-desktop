@@ -27,6 +27,9 @@
 .rootMenu li:last-child {
   margin-left: auto;
 }
+.menuItem {
+  height: 38px;
+}
 .button {
   height: var(--button-size);
   width: var(--button-size);

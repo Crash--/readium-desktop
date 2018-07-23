@@ -20,7 +20,7 @@ import { Store } from "redux";
 import {
     catalogActions,
     lcpActions,
-    publicationDownloadActions,
+    publicationDownloadActions
 } from "readium-desktop/common/redux/actions";
 
 import { Publication } from "readium-desktop/common/models/publication";
@@ -40,7 +40,10 @@ import CardIcon from "readium-desktop/renderer/assets/icons/view-card.svg";
 import ListIcon from "readium-desktop/renderer/assets/icons/view-list.svg";
 import * as LibraryStyles from "readium-desktop/renderer/assets/styles/library.css";
 
-import { PublicationCard, PublicationListElement } from "readium-desktop/renderer/components/Publication/index";
+import {
+    PublicationCard,
+    PublicationListElement
+} from "readium-desktop/renderer/components/Publication/index";
 
 import FocusLock from "react-focus-lock";
 
@@ -71,15 +74,16 @@ interface IDownload {
     progress: number;
 }
 
-export default class Library extends React.Component<LibraryProps, ILibraryState> {
+export default class Library extends React.Component<
+    LibraryProps,
+    ILibraryState
+> {
     public state: ILibraryState;
     public props: LibraryProps;
 
-    @lazyInject("translator")
-    private translator: Translator;
+    @lazyInject("translator") private translator: Translator;
 
-    @lazyInject("store")
-    private store: Store<RootState>;
+    @lazyInject("store") private store: Store<RootState>;
 
     constructor(props: LibraryProps) {
         super(props);
@@ -94,7 +98,7 @@ export default class Library extends React.Component<LibraryProps, ILibraryState
             infoDialogOpen: false,
             currentPublication: undefined,
             returnDialogOpen: false,
-            renewDialogOpen: false,
+            renewDialogOpen: false
         };
 
         this.sort = this.sort.bind(this);
@@ -109,8 +113,10 @@ export default class Library extends React.Component<LibraryProps, ILibraryState
                 lcpStore.lastUserKeyCheckDate !== this.state.lcpLastCheck
             ) {
                 this.setState({
-                    lcpPassOpen: (lcpStore.lastUserKeyCheck.status === UserKeyCheckStatus.Error),
-                    lcpLastCheck: lcpStore.lastUserKeyCheckDate,
+                    lcpPassOpen:
+                        lcpStore.lastUserKeyCheck.status ===
+                        UserKeyCheckStatus.Error,
+                    lcpLastCheck: lcpStore.lastUserKeyCheckDate
                 });
             }
 
@@ -121,36 +127,44 @@ export default class Library extends React.Component<LibraryProps, ILibraryState
                 dlStore.lastUpdatedDate !== this.state.dlLastUpdatedDate
             ) {
                 this.setState({
-                    dlLastUpdatedDate: dlStore.lastUpdatedDate,
+                    dlLastUpdatedDate: dlStore.lastUpdatedDate
                 });
             }
         });
     }
 
-    public downloadEPUB = (newPublication: Publication, publicationId: number) => {
+    public downloadEPUB = (
+        newPublication: Publication,
+        publicationId: number
+    ) => {
         this.store.dispatch(publicationDownloadActions.add(newPublication));
-    }
+    };
 
-    public cancelDownload = (publication: Publication, publicationId: number) => {
+    public cancelDownload = (
+        publication: Publication,
+        publicationId: number
+    ) => {
         this.store.dispatch(publicationDownloadActions.cancel(publication));
-    }
+    };
 
     public deletePublication = (publication: Publication) => {
         this.store.dispatch(catalogActions.removePublication(publication));
-    }
+    };
 
     public openDeleteDialog = (publication: Publication) => {
-        const message: JSX.Element = (<p>{this.translator.translate("dialog.delete")}</p>);
+        const message: JSX.Element = (
+            <p>{this.translator.translate("dialog.delete")}</p>
+        );
         this.props.openDialog(
             message,
-            this.deletePublication.bind(this, publication),
+            this.deletePublication.bind(this, publication)
         );
-    }
+    };
 
     public Spinner() {
         return (
             <FontIcon
-                style = {Styles.Library.spinner}
+                style={Styles.Library.spinner}
                 className="fa fa-spinner fa-spin fa-3x fa-fw"
                 color={blue500}
             />
@@ -162,26 +176,33 @@ export default class Library extends React.Component<LibraryProps, ILibraryState
         let i = 0;
         const dlStore = this.store.getState().publicationDownloads;
 
-        for (const pub of this.props.catalog.publications.sort(this.sort.bind(this))) {
+        for (const pub of this.props.catalog.publications.sort(
+            this.sort.bind(this)
+        )) {
             let downloading = false;
             let downloadProgress: number = null;
 
             if (dlStore.publicationDownloadProgress[pub.identifier]) {
                 downloading = true;
-                downloadProgress = dlStore.publicationDownloadProgress[pub.identifier];
+                downloadProgress =
+                    dlStore.publicationDownloadProgress[pub.identifier];
             }
 
-            list.push(<PublicationCard key={i}
-                publicationId={i}
-                downloading={downloading}
-                downloadProgress={downloadProgress}
-                publication={pub}
-                handleRead={this.props.handleRead.bind(this)}
-                cancelDownload={this.cancelDownload.bind(this)}
-                deletePublication={this.openDeleteDialog.bind(this)}
-                openInfoDialog={this.openInfoDialog.bind(this)}
-                openReturnDialog={this.openReturnDialog.bind(this)}
-                openRenewDialog={this.openRenewDialog.bind(this)}/>);
+            list.push(
+                <PublicationCard
+                    key={i}
+                    publicationId={i}
+                    downloading={downloading}
+                    downloadProgress={downloadProgress}
+                    publication={pub}
+                    handleRead={this.props.handleRead.bind(this)}
+                    cancelDownload={this.cancelDownload.bind(this)}
+                    deletePublication={this.openDeleteDialog.bind(this)}
+                    openInfoDialog={this.openInfoDialog.bind(this)}
+                    openReturnDialog={this.openReturnDialog.bind(this)}
+                    openRenewDialog={this.openRenewDialog.bind(this)}
+                />
+            );
             i++;
         }
         return list;
@@ -198,26 +219,31 @@ export default class Library extends React.Component<LibraryProps, ILibraryState
 
             if (dlStore.publicationDownloadProgress[pub.identifier]) {
                 downloading = true;
-                downloadProgress = dlStore.publicationDownloadProgress[pub.identifier];
+                downloadProgress =
+                    dlStore.publicationDownloadProgress[pub.identifier];
             }
 
-            list.push(<PublicationListElement key={i}
-                publication={pub}
-                publicationId={i}
-                downloading={downloading}
-                downloadProgress={downloadProgress}
-                handleRead={this.props.handleRead.bind(this)}
-                cancelDownload={this.cancelDownload}
-                deletePublication={this.openDeleteDialog.bind(this)}
-                openInfoDialog={this.openInfoDialog.bind(this)}
-                openReturnDialog={this.openReturnDialog.bind(this)}
-                openRenewDialog={this.openRenewDialog.bind(this)}/>);
+            list.push(
+                <PublicationListElement
+                    key={i}
+                    publication={pub}
+                    publicationId={i}
+                    downloading={downloading}
+                    downloadProgress={downloadProgress}
+                    handleRead={this.props.handleRead.bind(this)}
+                    cancelDownload={this.cancelDownload}
+                    deletePublication={this.openDeleteDialog.bind(this)}
+                    openInfoDialog={this.openInfoDialog.bind(this)}
+                    openReturnDialog={this.openReturnDialog.bind(this)}
+                    openRenewDialog={this.openRenewDialog.bind(this)}
+                />
+            );
             i++;
         }
         return <div style={Styles.BookListElement.container}> {list} </div>;
     }
 
-    public render(): React.ReactElement<{}>  {
+    public render(): React.ReactElement<{}> {
         const __ = this.translator.translate.bind(this.translator);
         const list = this.state.list;
 
@@ -240,163 +266,215 @@ export default class Library extends React.Component<LibraryProps, ILibraryState
                 );
             }
         } else {
-            listToDisplay = <this.Spinner/>;
+            listToDisplay = <this.Spinner />;
         }
+        const subHeader = (
+            <div>
+                <button
+                    className={classNames(
+                        LibraryStyles.display_button,
+                        !list && LibraryStyles.display_button_disable
+                    )}
+                    onClick={() => {
+                        that.setState({ list: true });
+                    }}
+                >
+                    <svg viewBox={ListIcon.content_table}>
+                        <title>{__("library.svg.list")}</title>
+                        <use xlinkHref={"#" + ListIcon.id} />
+                    </svg>
+                </button>
+                <button
+                    className={classNames(
+                        LibraryStyles.display_button,
+                        list && LibraryStyles.display_button_disable
+                    )}
+                    onClick={() => {
+                        that.setState({ list: false });
+                    }}
+                >
+                    <svg viewBox={CardIcon.content_table}>
+                        <title>{__("library.svg.card")}</title>
+                        <use xlinkHref={"#" + CardIcon.id} />
+                    </svg>
+                </button>
+            </div>
+        );
 
         return (
             <div>
-                <div>
-                    <button
-                        className={
-                            classNames(LibraryStyles.display_button, !list && LibraryStyles.display_button_disable)
-                        }
-                        onClick={() => {that.setState({list: true});
-                    }}>
-                        <svg viewBox={ListIcon.content_table}>
-                            <title>{__("library.svg.list")}</title>
-                            <use xlinkHref={"#" + ListIcon.id} />
-                        </svg>
-                    </button>
-                    <button
-                        className={
-                            classNames(LibraryStyles.display_button, list && LibraryStyles.display_button_disable)
-                        }
-                        onClick={() => {that.setState({list: false});
-                    }}>
-                        <svg viewBox={CardIcon.content_table}>
-                            <title>{__("library.svg.card")}</title>
-                            <use xlinkHref={"#" + CardIcon.id} />
-                        </svg>
-                    </button>
-                </div >
-                <div style={Styles.Library.list}>
-                    {listToDisplay}
-                </div>
-                    <Dialog
-                        title={__("library.lcp.title")}
-                        actions={[
-                            <FlatButton
-                                label={__("library.lcp.cancel")}
-                                primary={true}
-                                onClick={this.handleLcpPassClose.bind(this)}
-                            />,
-                            <FlatButton
-                                label={__("library.lcp.submit")}
-                                primary={true}
-                                onClick={this.handleLcpPassSubmit.bind(this)}
-                            />,
-                        ]}
-                        open={this.state.lcpPassOpen}
-                        onRequestClose={this.handleLcpPassClose.bind(this)}
-                    >
-                        {this.store.getState().lcp.lastUserKeyCheck && (
-                            <div className={LibraryStyles.lcp_pass_form}>
-                                <p>{__("library.lcp.sentence")}</p>
-                                <p>{__("library.lcp.hintSentence")
-                                    + this.store.getState().lcp.lastUserKeyCheck.hint} </p>
-                                <div>
-                                    <TextField
-                                        ref={(input) => {
-                                            if (input) {
-                                                input.focus();
-                                            }
-                                        }}
-                                        hintText={__("library.lcp.hint")}
-                                        type={!this.state.lcpPassVisible ? "password" : "text"}
-                                        onChange={this.handleLcpPassChange.bind(this)}
-                                        value={this.state.lcpPass}
-                                    />
-                                    <button
-                                        className={LibraryStyles.eye_button}
-                                        onClick={this.switchLcpPassVisibe.bind(this)}>
-                                        <svg viewBox={EyeIcon.eye}>
-                                            <title>{__("library.svg.showParaphrase")}</title>
-                                            <use xlinkHref={"#" + EyeIcon.id} />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-                    </Dialog>
-                    <Dialog
-                        title={__("library.lcp.informations.title")}
-                        actions={[
-                            <FlatButton
-                                label={__("library.lcp.informations.close")}
-                                primary={true}
-                                onClick={this.closeInfoDialog.bind(this)}
-                            />,
-                        ]}
-                        modal={true}
-                        open={this.state.infoDialogOpen}
-                    >
-                        {this.state.currentPublication && (
+                {subHeader}
+                <div style={Styles.Library.list}>{listToDisplay}</div>
+                <Dialog
+                    title={__("library.lcp.title")}
+                    actions={[
+                        <FlatButton
+                            label={__("library.lcp.cancel")}
+                            primary={true}
+                            onClick={this.handleLcpPassClose.bind(this)}
+                        />,
+                        <FlatButton
+                            label={__("library.lcp.submit")}
+                            primary={true}
+                            onClick={this.handleLcpPassSubmit.bind(this)}
+                        />
+                    ]}
+                    open={this.state.lcpPassOpen}
+                    onRequestClose={this.handleLcpPassClose.bind(this)}
+                >
+                    {this.store.getState().lcp.lastUserKeyCheck && (
+                        <div className={LibraryStyles.lcp_pass_form}>
+                            <p>{__("library.lcp.sentence")}</p>
+                            <p>
+                                {__("library.lcp.hintSentence") +
+                                    this.store.getState().lcp.lastUserKeyCheck
+                                        .hint}{" "}
+                            </p>
                             <div>
-                                <p>{__("library.lcp.informations.provider") + " " + lcp.provider}</p>
-                                <p>{__("library.lcp.informations.issued") + " " + this.dateToString(lcp.issued)}</p>
-                                {lcp.updated && (
-                                    <p>{__("library.lcp.informations.updated")
-                                        + " " + this.dateToString(lcp.updated)}</p>
-                                )}
-
-                                {lcp.rights.start && (
-                                    <span>
-                                        <h3>{__("library.lcp.informations.right.title")}</h3>
-                                        <p>{__("library.lcp.informations.right.start") + " "
-                                            + this.dateToString(lcp.rights.start)}</p>
-                                    </span>
-                                )}
-                                {lcp.rights.end && (
-                                    <p>{__("library.lcp.informations.right.end") + " "
-                                        + this.dateToString(lcp.rights.end)}</p>
-                                )}
-                                {lcp.rights.copy && (
-                                    <p>{__("library.lcp.informations.right.copy") + " "
-                                    + lcp.rights.copy}</p>
-                                )}
-                                {lcp.rights.print && (
-                                    <p>{__("library.lcp.informations.right.print") + " "
-                                        + lcp.rights.print}</p>
-                                )}
+                                <TextField
+                                    ref={input => {
+                                        if (input) {
+                                            input.focus();
+                                        }
+                                    }}
+                                    hintText={__("library.lcp.hint")}
+                                    type={
+                                        !this.state.lcpPassVisible
+                                            ? "password"
+                                            : "text"
+                                    }
+                                    onChange={this.handleLcpPassChange.bind(
+                                        this
+                                    )}
+                                    value={this.state.lcpPass}
+                                />
+                                <button
+                                    className={LibraryStyles.eye_button}
+                                    onClick={this.switchLcpPassVisibe.bind(
+                                        this
+                                    )}
+                                >
+                                    <svg viewBox={EyeIcon.eye}>
+                                        <title>
+                                            {__("library.svg.showParaphrase")}
+                                        </title>
+                                        <use xlinkHref={"#" + EyeIcon.id} />
+                                    </svg>
+                                </button>
                             </div>
-                        )}
-                    </Dialog>
-                    <Dialog
-                        actions={[
-                            <FlatButton
-                                label={__("dialog.yes")}
-                                primary={true}
-                                onClick={this.closeReturnDialog.bind(this)}
-                            />,
-                            <FlatButton
-                                label={__("dialog.no")}
-                                primary={true}
-                                onClick={this.closeReturnDialog.bind(this)}
-                            />,
-                        ]}
-                        modal={true}
-                        open={this.state.returnDialogOpen}
-                    >
-                        <p>{__("publication.returnSentence")}</p>
-                    </Dialog>
-                    <Dialog
-                        actions={[
-                            <FlatButton
-                                label={__("dialog.yes")}
-                                primary={true}
-                                onClick={this.closeRenewDialog.bind(this, true)}
-                            />,
-                            <FlatButton
-                                label={__("dialog.no")}
-                                primary={true}
-                                onClick={this.closeRenewDialog.bind(this)}
-                            />,
-                        ]}
-                        modal={true}
-                        open={this.state.renewDialogOpen}
-                    >
-                        <p>{__("publication.renewSentence")}</p>
-                    </Dialog>
+                        </div>
+                    )}
+                </Dialog>
+                <Dialog
+                    title={__("library.lcp.informations.title")}
+                    actions={[
+                        <FlatButton
+                            label={__("library.lcp.informations.close")}
+                            primary={true}
+                            onClick={this.closeInfoDialog.bind(this)}
+                        />
+                    ]}
+                    modal={true}
+                    open={this.state.infoDialogOpen}
+                >
+                    {this.state.currentPublication && (
+                        <div>
+                            <p>
+                                {__("library.lcp.informations.provider") +
+                                    " " +
+                                    lcp.provider}
+                            </p>
+                            <p>
+                                {__("library.lcp.informations.issued") +
+                                    " " +
+                                    this.dateToString(lcp.issued)}
+                            </p>
+                            {lcp.updated && (
+                                <p>
+                                    {__("library.lcp.informations.updated") +
+                                        " " +
+                                        this.dateToString(lcp.updated)}
+                                </p>
+                            )}
+
+                            {lcp.rights.start && (
+                                <span>
+                                    <h3>
+                                        {__(
+                                            "library.lcp.informations.right.title"
+                                        )}
+                                    </h3>
+                                    <p>
+                                        {__(
+                                            "library.lcp.informations.right.start"
+                                        ) +
+                                            " " +
+                                            this.dateToString(lcp.rights.start)}
+                                    </p>
+                                </span>
+                            )}
+                            {lcp.rights.end && (
+                                <p>
+                                    {__("library.lcp.informations.right.end") +
+                                        " " +
+                                        this.dateToString(lcp.rights.end)}
+                                </p>
+                            )}
+                            {lcp.rights.copy && (
+                                <p>
+                                    {__("library.lcp.informations.right.copy") +
+                                        " " +
+                                        lcp.rights.copy}
+                                </p>
+                            )}
+                            {lcp.rights.print && (
+                                <p>
+                                    {__(
+                                        "library.lcp.informations.right.print"
+                                    ) +
+                                        " " +
+                                        lcp.rights.print}
+                                </p>
+                            )}
+                        </div>
+                    )}
+                </Dialog>
+                <Dialog
+                    actions={[
+                        <FlatButton
+                            label={__("dialog.yes")}
+                            primary={true}
+                            onClick={this.closeReturnDialog.bind(this)}
+                        />,
+                        <FlatButton
+                            label={__("dialog.no")}
+                            primary={true}
+                            onClick={this.closeReturnDialog.bind(this)}
+                        />
+                    ]}
+                    modal={true}
+                    open={this.state.returnDialogOpen}
+                >
+                    <p>{__("publication.returnSentence")}</p>
+                </Dialog>
+                <Dialog
+                    actions={[
+                        <FlatButton
+                            label={__("dialog.yes")}
+                            primary={true}
+                            onClick={this.closeRenewDialog.bind(this, true)}
+                        />,
+                        <FlatButton
+                            label={__("dialog.no")}
+                            primary={true}
+                            onClick={this.closeRenewDialog.bind(this)}
+                        />
+                    ]}
+                    modal={true}
+                    open={this.state.renewDialogOpen}
+                >
+                    <p>{__("publication.renewSentence")}</p>
+                </Dialog>
             </div>
         );
     }
@@ -415,62 +493,87 @@ export default class Library extends React.Component<LibraryProps, ILibraryState
     }
 
     private handleLcpPassClose() {
-        this.setState({lcpPassOpen: false});
+        this.setState({ lcpPassOpen: false });
     }
 
     private handleLcpPassSubmit() {
         this.store.dispatch(
             lcpActions.sendPassphrase(
                 this.store.getState().lcp.lastUserKeyCheck.publication,
-                this.state.lcpPass,
-            ),
+                this.state.lcpPass
+            )
         );
         this.handleLcpPassClose();
-        this.setState({lcpPass: undefined});
+        this.setState({ lcpPass: undefined });
     }
 
     private handleLcpPassChange(event: any) {
         const lcpPass = event.target.value;
-        this.setState({lcpPass});
+        this.setState({ lcpPass });
     }
 
     private switchLcpPassVisibe() {
-        this.setState({lcpPassVisible: !this.state.lcpPassVisible});
+        this.setState({ lcpPassVisible: !this.state.lcpPassVisible });
     }
 
     private openInfoDialog(publication: Publication) {
-        this.setState({infoDialogOpen: true, currentPublication: publication});
+        this.setState({
+            infoDialogOpen: true,
+            currentPublication: publication
+        });
     }
 
     private closeInfoDialog() {
-        this.setState({infoDialogOpen: false, currentPublication: undefined});
+        this.setState({ infoDialogOpen: false, currentPublication: undefined });
     }
 
     private openRenewDialog(publication: Publication) {
-        this.setState({renewDialogOpen: true, currentPublication: publication});
+        this.setState({
+            renewDialogOpen: true,
+            currentPublication: publication
+        });
     }
 
     private closeRenewDialog(yes?: boolean) {
         if (yes) {
-            this.store.dispatch(lcpActions.lsdRenew(this.state.currentPublication));
+            this.store.dispatch(
+                lcpActions.lsdRenew(this.state.currentPublication)
+            );
         }
-        this.setState({renewDialogOpen: false, currentPublication: undefined});
+        this.setState({
+            renewDialogOpen: false,
+            currentPublication: undefined
+        });
     }
 
     private openReturnDialog(publication: Publication) {
-        this.setState({returnDialogOpen: true, currentPublication: publication});
+        this.setState({
+            returnDialogOpen: true,
+            currentPublication: publication
+        });
     }
 
     private closeReturnDialog(yes?: boolean) {
         if (yes) {
-            this.store.dispatch(lcpActions.lsdReturn(this.state.currentPublication));
+            this.store.dispatch(
+                lcpActions.lsdReturn(this.state.currentPublication)
+            );
         }
-        this.setState({returnDialogOpen: false, currentPublication: undefined});
+        this.setState({
+            returnDialogOpen: false,
+            currentPublication: undefined
+        });
     }
 
     private dateToString(dateStr: Date): string {
         const date = new Date(dateStr);
 
-        return date.toLocaleDateString() + " - " + date.getHours() + ":" + date.getMinutes();
+        return (
+            date.toLocaleDateString() +
+            " - " +
+            date.getHours() +
+            ":" +
+            date.getMinutes()
+        );
     }
 }

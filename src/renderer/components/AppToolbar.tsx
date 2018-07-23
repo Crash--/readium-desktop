@@ -221,7 +221,7 @@ export default class AppToolbar extends React.Component<
                             onClick={() => {
                                 this.handleLocaleChange("fr");
                             }}
-                          
+                            style={{ height: "38px" }}
                         >
                             <span className={AppStyles.primarytextcolor}>
                                 {__("Mes livres")}
@@ -232,6 +232,7 @@ export default class AppToolbar extends React.Component<
                             onClick={() => {
                                 this.handleLocaleChange("fr");
                             }}
+                            style={{ height: "38px" }}
                         >
                             <span className={AppStyles.secondtextcolor}>
                                 {__("Catalogues")}
@@ -242,6 +243,7 @@ export default class AppToolbar extends React.Component<
                             onClick={() => {
                                 this.handleLocaleChange("fr");
                             }}
+                            style={{ height: "38px" }}
                         >
                             <span className={AppStyles.secondtextcolor}>
                                 {__("Préférences")}
